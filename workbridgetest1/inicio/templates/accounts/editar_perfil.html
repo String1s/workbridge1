@@ -1,0 +1,152 @@
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm" style="max-width: 600px; margin: auto;">
+        <h2 class="card-header bg-primary text-white text-center">Editar Perfil</h2>
+        <div class="card-body">
+            <form method="post" id="edit-profile-form">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {% if field.field.widget.input_type == 'date' %}
+                        <input type="text" name="{{ field.name }}" id="{{ field.id_for_label }}" value="{{ field.value|default_if_none:'' }}" class="form-control datepicker">
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                    {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                    <small class="form-text text-danger">{{ error }}</small>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger mt-3">
+                    <ul class="mb-0">
+                        {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                
+                <button type="submit" class="btn btn-primary btn-block">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos personalizados para la página */
+    body {
+        font-family: 'Nunito', sans-serif;
+        background: url("{% static 'inicio/img/pexels-pixabay-434659.jpg' %}") no-repeat center center fixed;
+        background-size: cover;
+        margin: 0;
+        color: #333;
+    }
+
+    .container {
+        background-color: rgba(233, 242, 249, 0.8); /* Fondo ligeramente transparente */
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        border-bottom: none;
+        border-radius: 8px 8px 0 0;
+        padding: 20px;
+    }
+
+    .card-body {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 0 0 8px 8px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+    }
+
+    .form-group input.error,
+    .form-group textarea.error {
+        border-color: #dc3545;
+    }
+
+    .form-text {
+        margin-top: 5px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        transition: background-color 0.3s, border-color 0.3s;
+        padding: 12px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004b9f;
+    }
+
+    .alert {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            padding: 15px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .btn-primary {
+            font-size: 14px;
+            padding: 10px;
+        }
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"/>
+
+<script>
+    $(document).ready(function(){
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true
+        });
+    });
+</script>
+
+{% endblock %}

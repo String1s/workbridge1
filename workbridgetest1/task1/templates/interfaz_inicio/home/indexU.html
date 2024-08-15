@@ -1,0 +1,81 @@
+{% load static %}
+{% include 'interfaz_inicio/pie/header.html' %}
+
+<style>
+    .ui.card {
+        margin-bottom: 20px; 
+        height: 600px; 
+        display: flex;
+        flex-direction: column;
+    }
+    .ui.card .image {
+        height: 200px; 
+        overflow: hidden;
+    }
+    .ui.card .image img {
+        height: 100%;
+        width: 107%; 
+        object-fit: cover;
+    }
+    .ui.card .extra.content-button {
+        text-align: center; 
+        padding: 8px 0;
+    }
+    .ui.card .extra.content {
+        margin-top: 8px; 
+    }
+    .ui.button.custom {
+        background-color: #f44336; 
+        color: white;
+    }
+    .ui.button.custom:hover {
+        background-color: #c62828; 
+    }
+</style>
+
+<div class="ui container">
+    <div class="ui stackable grid">
+        {% for proyecto in proyectos %}
+            <div class="four wide column">
+                <div class="ui card">
+                    <div class="image">
+                        <img src="{{ proyecto.imagen.url }}" alt="{{ proyecto.nom_proyecto }}">
+                    </div>
+                    <div class="content">
+                        <a class="header"  onclick="denegar()">{{ proyecto.nom_proyecto }}</a>
+                        <div class="meta">
+                            <span class="date">Fecha: {{ proyecto.fecha }}</span>
+                        </div>
+                        <div class="description">
+                            {% if proyecto.descripcion|length > 150 %}
+                                {{ proyecto.descripcion|slice:":147" }}...
+                            {% else %}
+                                {{ proyecto.descripcion }}
+                            {% endif %}
+                        </div>
+                        <div class="extra content">
+                            <span>Teléfono: {{ proyecto.telefono }}</span>
+                            <br>
+                            <span>Categoría: {{ proyecto.categoria }}</span>
+                        </div>
+                        <p style="color: gray; font-size: small;">Proyecto publicado por: {{ proyecto.nom_aprendiz }}</p>
+                    </div>
+                    <div class="extra content-button">
+                        <button class="ui button custom" onclick="window.location.href='{% url 'comentariosU' proyecto.id_proyecto %}'">Ver Comentarios</button>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+<script>
+    function denegar() {
+        Swal.fire({
+            icon: "error",
+            title: "Denegado",
+            text: "Debes estar registrado",
+        });
+    }
+</script>
+
+{% include 'interfaz_inicio/pie/footer.html' %}

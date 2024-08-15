@@ -1,0 +1,121 @@
+{% load static %}
+{% include 'interfaz_empresa/pie/headerE.html' %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Estadísticas de Proyectos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            width: 50%;
+            margin: auto;
+        }
+        #categoriasChart {
+            width: 100% !important; 
+            height: auto !important; 
+        }
+    </style>
+</head>
+<body>
+    <div class="ui container">
+        <h1 class="ui header">Estadísticas de Proyectos</h1>
+        <div class="ui segment">
+            <div class="chart-container">
+                <canvas id="proyectosChart"></canvas>
+            </div>
+        </div>
+        <div class="ui segment">
+            <h2 class="ui header">Proyectos por Categoría</h2>
+            <div class="chart-container">
+                <canvas id="categoriasChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var totalProyectos = {{ total_proyectos|safe }};
+        var promedioColaboradores = {{ promedio_colaboradores|safe }};
+
+        var categoriasData = {
+            labels: [{% for item in proyectos_por_categoria %}"{{ item.categoria|escapejs }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Proyectos por Categoría',
+                data: [{% for item in proyectos_por_categoria %}{{ item.total|safe }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        var proyectosChart = new Chart(document.getElementById('proyectosChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Total de Proyectos', 'Promedio de Colaboradores'],
+                datasets: [{
+                    label: 'Estadísticas de Proyectos',
+                    data: [totalProyectos, promedioColaboradores],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        var categoriasChart = new Chart(document.getElementById('categoriasChart'), {
+            type: 'pie',
+            data: categoriasData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    datalabels: {
+                        display: true,
+                        color: '#000',
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: function(value) {
+                            return value;
+                        }
+                    }
+                },
+                maintainAspectRatio: false 
+            }
+        });
+    </script>
+</body>
+</html>
+
+{% include 'interfaz_empresa/pie/footerE.html' %}
